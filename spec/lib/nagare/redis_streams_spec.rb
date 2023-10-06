@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Nagare::RedisStreams do
+RSpec.describe NagareRedis::RedisStreams do
   describe 'mark_processed' do
     let(:stream) { 'nagare_redis_streams_spec' }
     let(:group) { 'monolith' }

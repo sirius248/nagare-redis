@@ -13,9 +13,9 @@ jobs:
         id: release
         with:
           release-type: ruby
-          package-name: nagare-redis
+          package-name: nagare_redis
           bump-minor-pre-major: true
-          version-file: "lib/nagare/version.rb"
+          version-file: "lib/nagare_redis/version.rb"
       # Checkout code if release was created
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }}

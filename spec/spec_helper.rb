@@ -2,7 +2,7 @@
 
 require 'bundler/setup'
 require 'redis'
-require 'nagare'
+require 'nagare_redis'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -16,6 +16,6 @@ RSpec.configure do |config|
   end
 
   # Initialize config defaults
-  Nagare::Config.configure do |_config|
+  NagareRedis::Config.configure do |_config|
   end
 end

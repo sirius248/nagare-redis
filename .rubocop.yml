@@ -1,7 +1,7 @@
 AllCops:
   TargetRubyVersion: 2.6
   Exclude:
-    - 'nagare.gemspec'
+    - 'nagare_redis.gemspec'
     - 'vendor/**/*'
 
 Metrics/BlockLength:
@@ -28,8 +28,8 @@ Layout/LineLength:
 
 Style/ClassVars:
   Exclude:
-    - 'lib/nagare/listener.rb'
-    - 'lib/nagare/publisher.rb'
+    - 'lib/nagare_redis/listener.rb'
+    - 'lib/nagare_redis/publisher.rb'
 
 # Cops from latest versions
 Layout/EmptyLinesAroundAttributeAccessor:

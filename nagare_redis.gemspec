@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'lib/nagare/version'
+require_relative 'lib/nagare_redis/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'nagare-redis'
-  spec.version       = Nagare::VERSION
+  spec.name          = 'nagare_redis'
+  spec.version       = NagareRedis::VERSION
   spec.authors       = ['Alex Reis']
   spec.email         = ['alex@alexmreis.com']
 
@@ -12,13 +12,13 @@ Gem::Specification.new do |spec|
   spec.description   = 'Nagare is a wrapper around Redis Streams that enables '\
                        'event-driven architectures and pub/sub messaging with'\
                        'durable subscribers'
-  spec.homepage      = 'https://github.com/vavato-be/nagare'
+  spec.homepage      = 'https://github.com/they-call-me-foo/nagare-redis'
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.6.0')
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/vavato-be/nagare.git'
-  spec.metadata['changelog_uri'] = 'https://github.com/vavato-be/nagare/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/they-call-me-foo/nagare-redis.git'
+  spec.metadata['changelog_uri'] = 'https://github.com/they-call-me-foo/nagare-redis/CHANGELOG.md'
 
   spec.add_dependency 'redis', '~> 4.4', '>= 4.4.0'
   spec.add_development_dependency 'rubocop', '~> 1.18.3', '>= 1.18.3'
@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
     end
   end
   spec.bindir = 'exe'
-  spec.executables << 'nagare'
+  spec.executables << 'nagare_redis'
   spec.require_paths = ['lib']
 end

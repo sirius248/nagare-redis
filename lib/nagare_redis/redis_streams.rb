@@ -2,7 +2,7 @@
 
 require 'socket'
 
-module Nagare
+module NagareRedis
   ##
   # Abstraction layer for dealing with the basic RedisStreams X... commands
   # for interacting with streams, groups and consumers.
@@ -21,7 +21,7 @@ module Nagare
       # @return [Redis] a connection to redis from the redis-rb gem
       def connection
         # FIXME: Connection pool should come in handy
-        @connection ||= Redis.new(url: Nagare::Config.redis_url)
+        @connection ||= Redis.new(url: NagareRedis::Config.redis_url)
       end
 
       ##
@@ -94,7 +94,7 @@ module Nagare
         result = connection.xautoclaim(stream,
                                        "#{stream}-#{group}",
                                        "#{hostname}-#{thread_id}",
-                                       Nagare::Config.min_idle_time,
+                                       NagareRedis::Config.min_idle_time,
                                        '0-0',
                                        count: 1)
 
@@ -102,7 +102,7 @@ module Nagare
         if result['entries'].any?
           message_id = result['entries'].first.first
           if retry_count(stream_prefix, group,
-                         message_id) > Nagare::Config.max_retries
+                         message_id) > NagareRedis::Config.max_retries
             move_to_dlq(stream_prefix, group, result['entries'].first)
             return claim_next_stuck_message(stream_prefix, group)
           end
@@ -130,9 +130,9 @@ module Nagare
       ##
       # Moves a message to the dead letter queue stream
       def move_to_dlq(stream, group, message)
-        Nagare.logger.warn "Moving message to DLQ #{message} \
+        NagareRedis.logger.warn "Moving message to DLQ #{message} \
                             from stream #{stream}"
-        publish(Nagare::Config.dlq_stream, stream, message.to_json)
+        publish(NagareRedis::Config.dlq_stream, stream, message.to_json)
         mark_processed(stream, group, message.first)
       end
 
@@ -188,7 +188,7 @@ module Nagare
       end
 
       def stream_name(stream)
-        suffix = Nagare::Config.suffix
+        suffix = NagareRedis::Config.suffix
         if suffix.nil?
           stream
         else
@@ -214,7 +214,7 @@ module Nagare
       private
 
       def logger
-        Nagare.logger
+        NagareRedis.logger
       end
 
       def hostname

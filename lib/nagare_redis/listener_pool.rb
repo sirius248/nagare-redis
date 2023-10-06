@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Nagare
+module NagareRedis
   ##
   # ListenerPool acts both as a registry of all listeners in the application
   # and as the polling mechanism that retrieves messages from redis using
@@ -27,7 +27,7 @@ module Nagare
 
       def listeners
         ObjectSpace.each_object(Class).select do |klass|
-          klass < Nagare::Listener
+          klass < NagareRedis::Listener
         end
       end
 
@@ -37,7 +37,7 @@ module Nagare
       #
       # @return [Thread] the listening thread
       def start_listening
-        logger.info 'Starting Nagare thread'
+        logger.info 'Starting NagareRedis thread'
         Thread.new do
           loop do
             poll
@@ -59,12 +59,12 @@ module Nagare
       private
 
       def poll_stream(stream, listeners)
-        return unless Nagare::RedisStreams.group_exists?(stream, group)
+        return unless NagareRedis::RedisStreams.group_exists?(stream, group)
 
-        messages = Nagare::RedisStreams.claim_next_stuck_message(stream, group)
+        messages = NagareRedis::RedisStreams.claim_next_stuck_message(stream, group)
 
         if messages.nil? || messages.empty?
-          messages = Nagare::RedisStreams.read_next_messages(stream, group)
+          messages = NagareRedis::RedisStreams.read_next_messages(stream, group)
         end
         return unless messages.any?
 
@@ -74,7 +74,7 @@ module Nagare
       end
 
       def claim_pending_messages(stream)
-        return nil unless Nagare::RedisStreams.group_exists?(stream, group)
+        return nil unless NagareRedis::RedisStreams.group_exists?(stream, group)
       end
 
       def deliver_message(stream, message, listeners)
@@ -84,12 +84,12 @@ module Nagare
           invoke_listener(stream, message, listener)
         rescue StandardError => e
           listener_failed = true
-          Nagare::Config.error_handler.call(message, e)
+          NagareRedis::Config.error_handler.call(message, e)
         end
 
         return if listener_failed
 
-        Nagare::RedisStreams.mark_processed(stream, group, message[0])
+        NagareRedis::RedisStreams.mark_processed(stream, group, message[0])
       end
 
       def invoke_listener(stream, message, listener)
@@ -100,17 +100,17 @@ module Nagare
       end
 
       def logger
-        Nagare.logger
+        NagareRedis.logger
       end
 
       def group
-        Nagare::Config.group_name
+        NagareRedis::Config.group_name
       end
 
       def create_and_subscribe_to_stream(stream)
-        unless Nagare::RedisStreams.group_exists?(stream, group)
+        unless NagareRedis::RedisStreams.group_exists?(stream, group)
           logger.info("Creating listener group #{group} for stream #{stream}")
-          Nagare::RedisStreams.create_group(stream, group)
+          NagareRedis::RedisStreams.create_group(stream, group)
           return true
         end
         false

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Nagare
+module NagareRedis
   ##
   # Publisher is a mixin that allows classes to easily publish events
   # to a redis stream.
@@ -42,9 +42,9 @@ module Nagare
     # @param stream     [String] name of the stream to publish to
     def publish(event_name, data, stream = nil)
       stream ||= stream_name
-      Nagare.logger.info "Publishing to stream #{stream}: "\
+      NagareRedis.logger.info "Publishing to stream #{stream}: "\
         "#{event_name}: #{data}"
-      Nagare::RedisStreams.publish(stream, event_name, data.to_json)
+      NagareRedis::RedisStreams.publish(stream, event_name, data.to_json)
     end
 
     ##

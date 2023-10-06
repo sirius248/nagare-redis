@@ -9,11 +9,11 @@ elsif File.exist?('Gemfile.lock')
   require 'bundler/setup'
 end
 
-require 'nagare'
+require 'nagare_redis'
 
-Nagare.logger = nil
-Nagare.logger.level = :info
+NagareRedis.logger = nil
+NagareRedis.logger.level = :info
 
 # TODO: Capture interrupt and wait for listeners to not be busy before shutting
 #       down
-Nagare::ListenerPool.start_listening.join
+NagareRedis::ListenerPool.start_listening.join

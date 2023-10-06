@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe Nagare do
+RSpec.describe NagareRedis do
   let(:publisher) do
     Class.new do
-      include Nagare::Publisher
+      include NagareRedis::Publisher
       stream 'nagare_integration_stream'
 
       def do_something
@@ -15,7 +15,7 @@ RSpec.describe Nagare do
   end
 
   let(:listener) do
-    Class.new(Nagare::Listener) do
+    Class.new(NagareRedis::Listener) do
       stream 'nagare_integration_stream'
 
       class << self
@@ -37,9 +37,9 @@ RSpec.describe Nagare do
   end
 
   before do
-    Nagare::RedisStreams.truncate('nagare_integration_stream')
+    NagareRedis::RedisStreams.truncate('nagare_integration_stream')
 
-    Nagare::Config.configure do |config|
+    NagareRedis::Config.configure do |config|
       config.redis_url = "redis://#{ENV['REDIS_URL'] || 'localhost'}:#{ENV['REDIS_PORT'] || '6379'}"
       config.group_name = 'nagare_integration_group'
     end
@@ -49,7 +49,7 @@ RSpec.describe Nagare do
     it 'invokes the listener when the message is received' do
       listener
       publisher.new.do_something
-      Nagare::ListenerPool.poll
+      NagareRedis::ListenerPool.poll
       expect(listener.invoked).to eq true
     end
   end

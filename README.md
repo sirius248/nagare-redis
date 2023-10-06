@@ -25,7 +25,7 @@ information on how this works see
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'nagare-redis'
+gem 'nagare_redis'
 ```
 
 And then execute:
@@ -34,12 +34,12 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install nagare
+    $ gem install nagare_redis
 
 To use with rails, add nagare to the initializers:
 #### config/initializers/nagare.rb
 ```ruby
-Nagare.configure do |config|
+NagareRedis.configure do |config|
   # After x milisseconds a pending message is considered failed and
   # gets retried by a different consumer in the group. Configuring
   # it too low might cause double processing of messages as a consumer
@@ -94,7 +94,7 @@ microservices in your landscape.
 ##### Usage
 ```ruby
 class User < ApplicationModel
-  include Nagare::Publisher
+  include NagareRedis::Publisher
   stream 'users'
 
   after_commit :publish_event
@@ -110,7 +110,7 @@ end
 controllers. They receive events from Redis Stream Groups and process them.
 ##### Usage
 ```ruby
-class UserListener < Nagare::Listener
+class UserListener < NagareRedis::Listener
   stream 'users'
 
   def user_updated(event)

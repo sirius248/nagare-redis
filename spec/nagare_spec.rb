@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe Nagare do
+RSpec.describe NagareRedis do
   it 'has a version number' do
-    expect(Nagare::VERSION).not_to be nil
+    expect(NagareRedis::VERSION).not_to be nil
   end
 end

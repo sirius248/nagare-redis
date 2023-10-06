@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe Nagare::Listener do
+RSpec.describe NagareRedis::Listener do
   describe '.inherited gets called automatically when a class inherits from it' do
     it 'adds a ".stream" method to the child class' do
-      klazz = Class.new(Nagare::Listener) do
+      klazz = Class.new(NagareRedis::Listener) do
         stream :listener_spec_stream
       end
       expect(klazz.methods).to include(:stream)
@@ -16,7 +16,7 @@ RSpec.describe Nagare::Listener do
     let(:stream) { :listener_spec_stream }
 
     it 'sets the stream_name class variable' do
-      klazz = Class.new(Nagare::Listener) do
+      klazz = Class.new(NagareRedis::Listener) do
         stream :listener_spec_stream
       end
       expect(klazz.stream_name).to eq stream
@@ -27,7 +27,7 @@ RSpec.describe Nagare::Listener do
     subject(:listener) { listener_class.new }
 
     let(:listener_class) do
-      Class.new(Nagare::Listener) do
+      Class.new(NagareRedis::Listener) do
         stream :listener_spec_stream
 
         def handler_called?

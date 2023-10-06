@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-RSpec.describe Nagare::Publisher do
+RSpec.describe NagareRedis::Publisher do
   subject(:publisher) { publisher_class.new }
 
   let(:publisher_class) do
     Class.new do
-      include Nagare::Publisher
+      include NagareRedis::Publisher
 
       def self.name
         'TestPublisher'
@@ -18,9 +18,9 @@ RSpec.describe Nagare::Publisher do
   let(:rspec_stream) { 'rspec_stream' }
 
   before do
-    Nagare::RedisStreams.truncate(rspec_stream)
-    Nagare::RedisStreams.truncate(publisher_class.name.downcase)
-    Nagare::RedisStreams.truncate('new_stream')
+    NagareRedis::RedisStreams.truncate(rspec_stream)
+    NagareRedis::RedisStreams.truncate(publisher_class.name.downcase)
+    NagareRedis::RedisStreams.truncate('new_stream')
   end
 
   describe '.included is called automatically after a class includes the module' do
@@ -33,13 +33,13 @@ RSpec.describe Nagare::Publisher do
     it 'publishes a message to the specified redis stream' do
       message_id = publisher.publish('some_event_fired', { foo: 'bar' },
                                      rspec_stream)
-      expect(Nagare::RedisStreams.read_one(rspec_stream).first).to eq message_id
+      expect(NagareRedis::RedisStreams.read_one(rspec_stream).first).to eq message_id
     end
 
     it 'transforms the message into a { event_name: data } hash with json data' do
       message_id = publisher.publish('some_event_fired', { foo: 'bar' },
                                      rspec_stream)
-      expect(Nagare::RedisStreams.read_one(rspec_stream)).to match([message_id,
+      expect(NagareRedis::RedisStreams.read_one(rspec_stream)).to match([message_id,
                                                                     { 'some_event_fired' => { foo: 'bar' }.to_json }])
     end
 
@@ -48,7 +48,7 @@ RSpec.describe Nagare::Publisher do
         context 'when the stream parameter IS NOT passed in' do
           it 'defaults to the class name as the name of the stream' do
             message_id = publisher.publish('some_event_fired', { foo: 'bar' })
-            expect(Nagare::RedisStreams.read_one(publisher_class.name.downcase).first).to eq message_id
+            expect(NagareRedis::RedisStreams.read_one(publisher_class.name.downcase).first).to eq message_id
           end
         end
 
@@ -56,7 +56,7 @@ RSpec.describe Nagare::Publisher do
           it 'publishes to the stream provided' do
             message_id = publisher.publish('some_event_fired', { foo: 'bar' },
                                            rspec_stream)
-            expect(Nagare::RedisStreams.read_one(rspec_stream).first).to eq message_id
+            expect(NagareRedis::RedisStreams.read_one(rspec_stream).first).to eq message_id
           end
         end
       end
@@ -64,7 +64,7 @@ RSpec.describe Nagare::Publisher do
       context 'when a stream IS configured for the class' do
         let(:publisher_class) do
           Class.new do
-            include Nagare::Publisher
+            include NagareRedis::Publisher
             stream :new_stream
 
             def self.name
@@ -76,7 +76,7 @@ RSpec.describe Nagare::Publisher do
         context 'when the stream parameter IS NOT passed in' do
           it 'defaults to the class name as the name of the stream' do
             message_id = publisher.publish('some_event_fired', { foo: 'bar' })
-            expect(Nagare::RedisStreams.read_one('new_stream').first).to eq message_id
+            expect(NagareRedis::RedisStreams.read_one('new_stream').first).to eq message_id
           end
         end
 
@@ -84,7 +84,7 @@ RSpec.describe Nagare::Publisher do
           it 'publishes to the stream provided' do
             message_id = publisher.publish('some_event_fired', { foo: 'bar' },
                                            rspec_stream)
-            expect(Nagare::RedisStreams.read_one(rspec_stream).first).to eq message_id
+            expect(NagareRedis::RedisStreams.read_one(rspec_stream).first).to eq message_id
           end
         end
       end

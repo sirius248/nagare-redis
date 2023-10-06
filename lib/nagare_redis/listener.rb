@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './listener_pool'
-module Nagare
+module NagareRedis
   ##
   # Listener is a base class for your own listeners.
   #
@@ -30,7 +30,7 @@ module Nagare
         class_variable_set(:@@stream_name, name)
 
         # Force consumer group creation
-        Nagare::ListenerPool.listener_pool
+        NagareRedis::ListenerPool.listener_pool
         name
       end
 
@@ -54,10 +54,10 @@ module Nagare
     # The default implementation works based on the following convention:
     # Listeners define methods with the name of the event they handle.
     #
-    # Events in nagare are always stored in redis as { event_name: data }
+    # Events in nagareRedis are always stored in redis as { event_name: data }
     def handle_event(event)
       event_name = event.keys.first
-      Nagare.logger.debug("Received #{event}")
+      NagareRedis.logger.debug("Received #{event}")
       return unless respond_to?(event_name)
 
       send(event_name, JSON.parse(event[event_name], symbolize_names: true))
