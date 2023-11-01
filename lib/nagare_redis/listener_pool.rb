@@ -37,7 +37,7 @@ module NagareRedis
       #
       # @return [Thread] the listening thread
       def start_listening
-        logger.info 'Starting NagareRedis thread'
+        logger.info "Starting NagareRedis thread"
         Thread.new do
           loop do
             poll
@@ -74,7 +74,7 @@ module NagareRedis
       end
 
       def claim_pending_messages(stream)
-        return nil unless NagareRedis::RedisStreams.group_exists?(stream, group)
+        nil unless NagareRedis::RedisStreams.group_exists?(stream, group)
       end
 
       def deliver_message(stream, message, listeners)
@@ -82,7 +82,7 @@ module NagareRedis
 
         listeners.each do |listener|
           invoke_listener(stream, message, listener)
-        rescue StandardError => e
+        rescue => e
           listener_failed = true
           NagareRedis::Config.error_handler.call(message, e)
         end
@@ -94,8 +94,6 @@ module NagareRedis
 
       def invoke_listener(stream, message, listener)
         # TODO: Transactions
-        logger.info "Invoking listener #{listener.name} for stream #{stream} "\
-          "with message #{message}"
         listener.new.handle_event(message[1])
       end
 
