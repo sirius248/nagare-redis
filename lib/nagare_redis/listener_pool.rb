@@ -16,7 +16,6 @@ module NagareRedis
           stream = listener.stream_name
 
           unless hash.key?(listener.stream_name)
-            logger.debug "Assigned stream #{stream} - listener #{listener.name}"
             create_and_subscribe_to_stream(stream)
             hash[stream] = []
           end
